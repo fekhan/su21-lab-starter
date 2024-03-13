@@ -16,7 +16,12 @@ TestFailed: .asciiz "Test Failed!"
 #Modify the test so that you can catch the bugs in four of the five solutions!
 main:
     la a0 inputarray
-    jal accumulatorone
+#    jal accumulatorone
+    jal accumulatortwo
+#    jal accumulatorthree
+#    jal accumulatorfour
+#    jal accumulatorfive
+
     li t0 28
     beq a0 t0 Pass
 Fail:
