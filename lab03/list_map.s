@@ -1,3 +1,4 @@
+#Farman Ullah Khan
 .globl map
 
 .text
@@ -16,7 +17,7 @@ main:
     add a0, s0, x0 # Loads the address of the first node into a0
 
     # Load the address of the "square" function into a1 (hint: check out "la" on the green sheet)
-    ### YOUR CODE HERE ###
+    la a1, square
 
 
     # Issue the call to map
@@ -35,7 +36,7 @@ main:
     add a0, s0, x0 # Loads the address of the first node into a0
     
     # Load the address of the "decrement" function into a1 (should be very similar to before)
-    ### YOUR CODE HERE ###
+    la a1, decrement
 
 
     # Issue the call to map
@@ -52,6 +53,11 @@ main:
 map:
     # Prologue: Make space on the stack and back-up registers
     ### YOUR CODE HERE ###
+    addi sp, sp, -12
+    sw ra, 0(sp)
+    sw s0, 4(sp)
+    sw s1, 8(sp)
+
 
     beq a0, x0, done # If we were given a null pointer (address 0), we're done.
 
@@ -62,32 +68,56 @@ map:
     # What does this tell you about how you access the value and how you access the pointer to next?
 
     # Load the value of the current node into a0
-    # THINK: Why a0?
+    # THINK: Why a0? 
     ### YOUR CODE HERE ###
+
+    lw a0, 0(s0)  # Loads the 4 bytes of current node from the list to a0 because ao is to be passed as
+                  # an argument to the functions that the "map" function is applying to the value 
+
 
     # Call the function in question on that value. DO NOT use a label (be prepared to answer why).
     # Hint: Where do we keep track of the function to call? Recall the parameters of "map".
     ### YOUR CODE HERE ###
 
+    jalr s1     # The reason of not using the label is that we do not know the name of the function at 
+                # compile time. Instead, we have a pointer to the function that we can use to call it dynamically at runtime.
+
     # Store the returned value back into the node
     # Where can you assume the returned value is?
     ### YOUR CODE HERE ###
+
+    sw a0, 0(s0) # stores the returned value (a0) back in to the current node 
 
     # Load the address of the next node into a0
     # The address of the next node is an attribute of the current node.
     # Think about how structs are organized in memory.
     ### YOUR CODE HERE ###
-
+    
+    lw a0, 4(s0) # loads the next 4 bytes of the current node into the a0
+  
     # Put the address of the function back into a1 to prepare for the recursion
     # THINK: why a1? What about a0?
     ### YOUR CODE HERE ###
 
+    add a1, s1,x0 # Address of the func to be applied to each element of list is stored in the s1            
+                  # is put back in the a1.The a0 is used to hold the address of the next node to be
+                  # processed, so that the recursion can proceed to the next step.Thats why we used a1 not a0
+    
     # Recurse
     ### YOUR CODE HERE ###
+
+    jal ra, map # jumps back to the begining of map functions to recurse 
 
 done:
     # Epilogue: Restore register values and free space from the stack
     ### YOUR CODE HERE ###
+    
+    # stack restored
+    lw ra, 0(sp)
+    lw s0, 4(sp)
+    lw s1, 8(sp)
+    addi sp, sp, 12
+
 
     jr ra # Return to caller
 
